@@ -3,10 +3,12 @@
 namespace Moorl\MerchantFinder\ElasticSearch;
 
 use Doctrine\DBAL\Connection;
+use OpenSearchDSL\Query\Compound\BoolQuery;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\Elasticsearch\Framework\AbstractElasticsearchDefinition;
@@ -89,6 +91,15 @@ class ProductEsDefinitionDecorator extends AbstractElasticsearchDefinition
         unset($document);
 
         return $documents;
+    }
+
+    public function buildTermQuery(Context $context, Criteria $criteria): BoolQuery
+    {
+        if ($this->systemConfigService->get('MoorlFoundation.config.cmpElasticSearchMappings')) {
+            return $this->decorated->buildTermQuery($context, $criteria);
+        }
+
+        return $this->decorated->buildTermQuery($context, $criteria);
     }
 
     private function fetchCreators(array $productIds = []): array
