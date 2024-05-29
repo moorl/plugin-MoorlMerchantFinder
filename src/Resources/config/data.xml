@@ -17,5 +17,9 @@
         <service id="Moorl\MerchantFinder\Demo\Standard\DemoStandard">
             <tag name="moorl.foundation.data" priority="0"/>
         </service>
+
+        <service id="Moorl\MerchantFinder\Demo\Usergroups\DemoUsergroups">
+            <tag name="moorl.foundation.data" priority="0"/>
+        </service>
     </services>
 </container>

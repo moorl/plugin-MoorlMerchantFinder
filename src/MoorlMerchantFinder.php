@@ -44,7 +44,8 @@ class MoorlMerchantFinder extends Plugin
         'product_translation',
         'product_category',
         'product_visibility',
-        'seo_url_template'
+        'seo_url_template',
+        'acl_role',
     ];
     final public const INHERITANCES = [
         'product' => ['MoorlMerchants', 'MoorlMerchantStocks'],
