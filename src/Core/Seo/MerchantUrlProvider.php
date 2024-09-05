@@ -27,7 +27,15 @@ class MerchantUrlProvider extends AbstractUrlProvider
 {
     final public const CHANGE_FREQ = 'weekly';
 
-    public function __construct(private readonly ConfigHandler $configHandler, private readonly Connection $connection, private readonly MerchantDefinition $definition, private readonly IteratorFactory $iteratorFactory, private readonly RouterInterface $router, private readonly EntityRepository $repository, private readonly SystemConfigService $systemConfigService)
+    public function __construct(
+        private readonly ConfigHandler $configHandler,
+        private readonly Connection $connection,
+        private readonly MerchantDefinition $definition,
+        private readonly IteratorFactory $iteratorFactory,
+        private readonly RouterInterface $router,
+        private readonly EntityRepository $repository,
+        private readonly SystemConfigService $systemConfigService
+    )
     {
     }
 
@@ -46,7 +54,7 @@ class MerchantUrlProvider extends AbstractUrlProvider
      */
     public function getUrls(SalesChannelContext $salesChannelContext, int $limit, ?int $offset = null): UrlResult
     {
-        if ($this->systemConfigService->get('MoorlMerchantFinder.config.') !== 'page') {
+        if (!$this->systemConfigService->get('MoorlMerchantFinder.config.detailPage', $salesChannelContext->getSalesChannelId())) {
             return new UrlResult([], null);
         }
 

@@ -38,6 +38,10 @@ class MerchantDetailRoute
      */
     public function load(string $merchantId, Request $request, SalesChannelContext $context, Criteria $criteria): MerchantDetailRouteResponse
     {
+        if (!$this->systemConfigService->get('MoorlMerchantFinder.config.detailPage', $context->getSalesChannelId())) {
+            throw new PageNotFoundException($merchantId);
+        }
+
         $criteria->setIds([$merchantId]);
 
         $criteria->addAssociation('country');
