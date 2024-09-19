@@ -1,62 +1,85 @@
-<div class="modal-dialog modal-lg" role="document">
-    {% set merchantSelectionOptions = {
-        searchUrl: seoUrl('frontend.moorl.merchant-selection.search'),
-        pickUrl: "/",
-        initiator: initiator
-    } %}
+{% block element_moorl_merchant_selection_modal %}
+    <div class="modal-dialog modal-lg" role="document">
+        {% set merchantSelectionOptions = {
+            searchUrl: seoUrl('frontend.moorl.merchant-selection.search'),
+            pickUrl: "/",
+            initiator: initiator
+        } %}
 
-    <form
-            data-moorl-merchant-selection
-            data-moorl-merchant-selection-options='{{ merchantSelectionOptions|json_encode }}'
-            class="modal-content"
-    >
-        <div class="modal-header">
-            <div class="modal-title h4">
-                {{ "moorl-merchant-finder.choseMerchant"|trans }}
-            </div>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+        <form
+                data-moorl-merchant-selection
+                data-moorl-merchant-selection-options='{{ merchantSelectionOptions|json_encode }}'
+                class="modal-content"
+        >
+            {% block element_moorl_merchant_modal_content %}
+                <div class="modal-header">
+                    <div class="modal-title h4">
+                        {{ "moorl-merchant-finder.choseMerchant"|trans }}
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-        <div class="modal-body moorl-foundation-modal-body">
-            <div class="js-listing-filter">
-                <div class="row g-3">
-                    <div class="col">
-                        <input
-                                type="text"
-                                class="form-control"
-                                name="location"
-                                aria-label="{{ "moorl-foundation.listing.filter.zipcodeCity"|trans }}"
-                                placeholder="{{ "moorl-foundation.listing.filter.zipcodeCity"|trans }}"
-                        >
+                <div class="modal-body moorl-foundation-modal-body">
+                    <div class="js-listing-filter">
+                        <div class="row g-3">
+                            <div class="col">
+                                <input
+                                        type="text"
+                                        class="form-control"
+                                        name="location"
+                                        aria-label="{{ "moorl-foundation.listing.filter.zipcodeCity"|trans }}"
+                                        placeholder="{{ "moorl-foundation.listing.filter.zipcodeCity"|trans }}"
+                                >
+                            </div>
+
+                            {% set countries = listing.aggregations.get('country') %}
+                            {% if countries and not countries.entities is empty %}
+                                {% set countriesSorted = countries.entities|sort((a, b) => a.translated.name|lower > b.translated.name|lower) %}
+
+                                <div class="col">
+                                    <select class="form-select" name="country" aria-label="{{ 'moorl-foundation.listing.filter.country'|trans }}">
+                                        <option selected value="">{{ 'moorl-merchant-finder.allCountries'|trans }}</option>
+                                        {% for country in countriesSorted %}
+                                            <option value="{{ country.id }}">{{ country.translated.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
 
-                    {% set countries = listing.aggregations.get('country') %}
-                    {% if countries and not countries.entities is empty %}
-                        {% set countriesSorted = countries.entities|sort((a, b) => a.translated.name|lower > b.translated.name|lower) %}
+                    <hr>
 
-                        <div class="col">
-                            <select class="form-select" name="country" aria-label="{{ 'moorl-foundation.listing.filter.country'|trans }}">
-                                <option selected value="">{{ 'moorl-merchant-finder.allCountries'|trans }}</option>
-                                {% for country in countriesSorted %}
-                                    <option value="{{ country.id }}">{{ country.translated.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    {% endif %}
+                    <ul class="js-listing-wrapper moorl-listing-list">
+                        {% sw_include '@MoorlMerchantFinder/plugin/moorl-merchant-finder/component/merchant-selection/selection-listing.html.twig' %}
+                    </ul>
                 </div>
-            </div>
 
-            <hr>
+                <div class="modal-footer text-end">
+                    {% block element_moorl_merchant_modal_footer %}
+                        {% if config('MoorlMerchantPicker.config.resetSelection') %}
+                            {% set merchantSelectionPickOptions = {
+                                pickUrl: seoUrl('frontend.moorl.merchant-selection.pick'),
+                                initiator: initiator,
+                                merchantId: null
+                            } %}
 
-            <ul class="js-listing-wrapper moorl-listing-list">
-                {% sw_include '@MoorlMerchantFinder/plugin/moorl-merchant-finder/component/merchant-selection/selection-listing.html.twig' %}
-            </ul>
-        </div>
+                            <button
+                                    class="btn btn-danger"
+                                    type="button"
+                                    data-moorl-merchant-selection-pick
+                                    data-moorl-merchant-selection-pick-options='{{ merchantSelectionPickOptions|json_encode }}'
+                            >
+                                {{ "moorl-merchant-finder.resetSelection"|trans }}
+                            </button>
+                        {% endif %}
 
-        <div class="modal-footer text-end">
-            <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Close">
-                {{ 'general.back'|trans }}
-            </button>
-        </div>
-    </form>
-</div>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Close">
+                            {{ 'general.back'|trans }}
+                        </button>
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        </form>
+    </div>
+{% endblock %}
