@@ -54,6 +54,23 @@
         </div>
 
         <div class="modal-footer text-end">
+            {% if config('MoorlMerchantPicker.config.resetSelection') %}
+                {% set merchantSelectionPickOptions = {
+                    pickUrl: seoUrl('frontend.moorl.merchant-selection.pick'),
+                    initiator: initiator,
+                    merchantId: null
+                } %}
+
+                <button
+                        class="btn btn-danger"
+                        type="button"
+                        data-moorl-merchant-selection-pick
+                        data-moorl-merchant-selection-pick-options='{{ merchantSelectionPickOptions|json_encode }}'
+                >
+                    {{ "moorl-merchant-finder.resetSelection"|trans }}
+                </button>
+            {% endif %}
+
             <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Close">
                 {{ 'general.back'|trans }}
             </button>
