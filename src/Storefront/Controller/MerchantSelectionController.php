@@ -86,6 +86,9 @@ class MerchantSelectionController extends StorefrontController
         }
 
         $merchant = $this->getItem($merchantId, $initiator, $salesChannelContext, $request);
+        if (!$merchant) {
+            return new Response();
+        }
 
         return new Response(sprintf(
             "%s | %s",
