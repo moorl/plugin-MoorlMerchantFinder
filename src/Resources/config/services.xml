@@ -227,5 +227,12 @@
 
             <tag name="shopware.sitemap_url_provider"/>
         </service>
+
+        <service id="Moorl\MerchantFinder\Core\Event\MerchantStorer">
+            <argument type="service" id="moorl_merchant.repository"/>
+            <argument type="service" id="event_dispatcher"/>
+
+            <tag name="flow.storer"/>
+        </service>
     </services>
 </container>
